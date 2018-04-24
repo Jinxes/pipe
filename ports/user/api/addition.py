@@ -16,7 +16,7 @@ class Controller(View):
         validator = self.validate()
         if validator.invalid():
             resp = jsonify(validator.get_errors())
-            return (resp, 401)
+            return (resp, 422)
 
         email = request.args.get('email')
         password = request.args.get('password')

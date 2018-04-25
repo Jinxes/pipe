@@ -1,12 +1,13 @@
-#-*- coding:utf8 -*-
+# -*- coding:utf8 -*-
 from boot.kernel import app
 from opt.singleton import singleton
 from werkzeug.security import generate_password_hash, check_password_hash
 from boot import db
 from ports.user.model.user import User
 
+
 @singleton
-class Service:
+class UserService:
 
     _curent_user = None
 

@@ -1,8 +1,12 @@
-#-*- coding:utf8 -*-
+# -*- coding:utf8 -*-
+import json
 from flask.views import View
-from flask import request, jsonify, Response
-from opt.validator import Validator
-from ports.user.service import Service as UserService
+from flask import request, jsonify
+from ports.user.service.user import UserService
+from ports.user.service.auth import AuthService
+from ports.user.model.user_form import UserForm
+from flask_cors import cross_origin
+
 
 class Controller(View):
 
@@ -10,33 +14,28 @@ class Controller(View):
 
     def __init__(self):
         self.userService = UserService()
+        self.authService = AuthService()
 
+    @cross_origin()
     def dispatch_request(self):
-
-        validator = self.validate()
-        if validator.invalid():
-            resp = jsonify(validator.get_errors())
-            return (resp, 422)
-
-        email = request.args.get('email')
-        password = request.args.get('password')
-        nickname = request.args.get('nickname')
-        gender = request.args.get('gender')
-
-        if (self.userService.add(email, password, nickname, gender)):
-            return Response(status=201)
-        return Response(status=500)
-
-
-    def validate(self):
-        validator = Validator()
-        validator('email').required().email()
-        email = request.args.get('email')
-        if self.userService.email_exist(email):
-            validator.set_error('email', {'exist': '电子邮件重复了'})
-
-        validator('nickname').required().max_length(16)
-        if validator.has('gender'):
-            validator('gender').numeric().contain([0, 1, 2])
-
-        return validator
+        form = UserForm(request.form)
+        if form.validate():
+            if form.create():
+                payload = {
+                    'identity': form.id.data,
+                    'id': form.id.data,
+                    'nickname': form.nickname.data,
+                    'gender': form.gender.data
+                }
+                token = self.authService.make_auth_token(payload)
+                return jsonify(dict(token=token.decode())), 201
+            else:
+                return jsonify({
+                    'errors': {
+                        '_system': 'system busy'
+                    }
+                }), 500
+        else:
+            return jsonify({
+                'errors': form.errors
+            }), 422

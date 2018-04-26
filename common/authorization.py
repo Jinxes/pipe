@@ -5,7 +5,9 @@ from ports.user.service.auth import AuthService
 
 
 def dependent(cls):
-
+    '''
+    判定 token 的正确性, 不正确返回 401, token 格式错误 400
+    '''
     def decorator(f):
         auth = AuthService()
         auth_field = request.authorization

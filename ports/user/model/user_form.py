@@ -1,14 +1,18 @@
 from .user import User
+from .info import UserInfo
 from boot import db
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, NumberRange, Optional
+from validator import EmailExsits
+from werkzeug.security import generate_password_hash
 
 class UserForm(FlaskForm):
     id = IntegerField('id', validators=[Optional()])
     email = StringField('email', validators=[
         DataRequired('电子邮件不能为空'),
-        Email('电子邮件格式不正确')
+        Email('电子邮件格式不正确'),
+        EmailExsits('这个电子邮件已经被注册了')
     ])
     nickname = StringField('nickname', validators=[
         DataRequired('昵称不能为空')
@@ -23,10 +27,15 @@ class UserForm(FlaskForm):
 
     def create(self):
         try:
-            user = User(**self.data)
+            user = User(
+                email=self.email.data,
+                nickname=self.nickname.data,
+                password=self.createPassword(),
+                gender=self.gender.data
+            )
             db.session.add(user)
             db.session.commit()
-            return True
+            return user
         except Exception:
             return False
 
@@ -38,3 +47,6 @@ class UserForm(FlaskForm):
             return True
         except Exception:
             return False
+
+    def createPassword(self):
+        return generate_password_hash(self.password.data)

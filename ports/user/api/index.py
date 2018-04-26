@@ -2,7 +2,7 @@
 from flask.views import View
 from flask import request, jsonify
 from ports.user.service.user import UserService
-from common.Auth import dependent
+from common.authorization import dependent
 from ports.user.model.user_form import UserForm
 
 

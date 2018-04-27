@@ -18,12 +18,12 @@ class Controller(View):
 
     @cross_origin()
     def dispatch_request(self):
-        user = UserForm(request.form)
-        if user.validate():
-            user = user.create()
+        user_form = UserForm(request.form)
+        if user_form.validate():
+            user = user_form.create()
             if user:
-                info = InfoForm()
-                info = info.init(user.id)
+                info_form = InfoForm()
+                info = info_form.init(user.id)
                 if info:
                     token = self.authService.make_auth_token(user)
                     return jsonify(dict(token=token.decode())), 201
@@ -31,4 +31,4 @@ class Controller(View):
             else:
                 return jsonify({'errors': {'_system': 'system busy'}}), 500
         else:
-            return jsonify({'errors': user.errors}), 422
+            return jsonify({'errors': user_form.errors}), 422

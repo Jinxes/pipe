@@ -21,10 +21,10 @@ class AuthService:
         :return: string
         '''
         payload = {
-            'identity': user.id.data,
-            'id': user.id.data,
-            'nickname': user.nickname.data,
-            'gender': user.gender.data
+            'identity': user.id,
+            'id': user.id,
+            'nickname': user.nickname,
+            'gender': user.gender
         }
         token = jwt.encode(payload, self.secret_key, self.algorithm)
         return token

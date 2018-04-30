@@ -4,6 +4,7 @@ from flask import request
 from boot.kernel import app
 from common.singleton import singleton
 from ports.user.model.user import User
+from .user import UserService
 from werkzeug.security import check_password_hash
 
 
@@ -44,7 +45,8 @@ class AuthService:
         :param password: string
         :return: User|False
         '''
-        user = User.query.filter_by(email=email).first()
+        userService = UserService()
+        user  = userService.findByEmail(email)
         if user:
             if self.check_password(password, user.password):
                 return user
@@ -57,7 +59,8 @@ class AuthService:
         :param password: string
         :return: User|False
         '''
-        user = User.query.get(id)
+        userService = UserService()
+        user = userService.findById(id)
         if user:
             if self.check_password(password, user.password):
                 return user

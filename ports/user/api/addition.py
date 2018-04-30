@@ -27,8 +27,8 @@ class Controller(View):
                 if info:
                     token = self.authService.make_auth_token(user)
                     return jsonify(dict(token=token.decode())), 201
-                return jsonify({'errors': {'_system': 'system busy'}}), 500
+                return jsonify({'errors': {'_system': 'system busy1'}}), 500
             else:
-                return jsonify({'errors': {'_system': 'system busy'}}), 500
+                return jsonify({'errors': {'_system': 'system busy2'}}), 500
         else:
             return jsonify({'errors': user_form.errors}), 422

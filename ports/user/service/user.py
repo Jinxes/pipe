@@ -8,6 +8,9 @@ from ports.user.model.user import User
 @singleton
 class UserService:
 
+    STATE_ON = 1
+    STATE_OFF = 0
+
     _curent_user = None
 
     def email_exist(self, email):
@@ -25,7 +28,16 @@ class UserService:
         :param id: User.id
         :return: User
         '''
-        user = User.query.filter_by(id=id).first()
+        user = User.query.filter_by(id=id, state=self.STATE_ON).first()
+        return user
+
+    def findByEmail(self, email):
+        '''
+        根据 email 定位单个用户
+        :param id: User.id
+        :return: User
+        '''
+        user = User.query.filter_by(email=email, state=self.STATE_ON).first()
         return user
 
     def set_curent_user(self, user):

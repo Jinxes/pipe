@@ -9,8 +9,9 @@ def dependent(cls):
     判定 token 的正确性, 不正确返回 401, token 格式错误 400
     '''
     def decorator(f):
-        auth = AuthService()
-        auth_field = request.authorization
+        auth_field = request.headers.environ.get('HTTP_AUTHORIZATION')
+        if not auth_field:
+            Response(status=403)
         auth_pack = auth_field.split(' ')
         auth_type = auth_pack[0]
         if auth_type != 'Bearer':
@@ -18,6 +19,7 @@ def dependent(cls):
 
         token = auth_pack[1]
         if token is not None:
+            auth = AuthService()
             payload = auth.decode_token(token)
             userService = UserService()
             user = userService.findById(payload['identity'])

@@ -10,6 +10,7 @@ class User(db.Model):
     nickname = db.Column(VARCHAR(length=128), nullable=False)
     password = db.Column(VARCHAR(length=255), nullable=False)
     gender = db.Column(TINYINT(), nullable=False, default=0)
+    state = db.Column(TINYINT(), nullable=False, default=1)
     active = db.Column(TINYINT(), nullable=False, default=0)
     manager = db.Column(TINYINT(), nullable=False, default=0)
     create_time = db.Column(db.DateTime, nullable=False,

@@ -1,7 +1,9 @@
-from boot import db
+from flask import current_app
+from boot.extensions import db
 from datetime import datetime
 from sqlalchemy.dialects.mysql import INTEGER, VARCHAR, TINYINT, DATETIME
 from .info import UserInfo
+from ports.blog.model.blog import Blog
 
 class User(db.Model):
 
@@ -13,9 +15,9 @@ class User(db.Model):
     state = db.Column(TINYINT(), nullable=False, default=1)
     active = db.Column(TINYINT(), nullable=False, default=0)
     manager = db.Column(TINYINT(), nullable=False, default=0)
-    create_time = db.Column(db.DateTime, nullable=False,
-        default=datetime.utcnow)
-    info = db.relationship(UserInfo, backref='user', lazy=True)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    info = db.relationship(UserInfo, uselist=False, backref='user', lazy=True)
+    blogs = db.relationship(Blog, uselist=True, backref='user', lazy=True)
 
     def __str__(self):
         return '<User {0}>'.format(self.id)

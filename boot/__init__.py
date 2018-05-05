@@ -1,13 +1,26 @@
 #-*- coding:utf8 -*-
 from flask import Flask
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from config import dev as config
+from .setting import DevConfig, ProdConfig, TestConfig
+from .blueprints import register_blueprints
+from .extensions import db, migrate, jwt
 
-app = Flask(__name__)
-app.config.from_object(config)
-CORS(app)
-db = SQLAlchemy(app)
 
-migrate = Migrate(app, db)
+def register_extensions(app):
+    """Register Flask extensions."""
+    db.init_app(app)
+    migrate.init_app(app, db)
+    jwt.init_app(app)
+
+
+def create_app(config_object=ProdConfig):
+    """
+    :param config_object: The configuration object to use.
+    :return: Flask
+    """
+    app = Flask(__name__.split('.')[0])
+    app.url_map.strict_slashes = False
+    app.config.from_object(config_object)
+    register_extensions(app)
+    register_blueprints(app)
+    return app
+

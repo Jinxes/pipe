@@ -1,6 +1,6 @@
 from .user import User
 from .info import UserInfo
-from boot import db
+from boot.extensions import db
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, NumberRange, Optional

@@ -1,7 +1,5 @@
 # -*- coding:utf8 -*-
-from boot.kernel import app
-from common.singleton import singleton
-from boot import db
+from boot.singleton import singleton
 from ports.user.model.user import User
 
 

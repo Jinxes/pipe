@@ -5,7 +5,11 @@ from ports.user.service.user import UserService
 from ports.user.service.auth import AuthService
 from ports.user.model.user_form import UserForm
 from ports.user.model.info_form import InfoForm
-from flask_cors import cross_origin
+from flask_jwt import current_identity, jwt_required
+from boot.jwt_util import jwt_optional
+from flask_apispec import use_kwargs, marshal_with
+from ports.user.user_schema import user_schema
+from werkzeug.datastructures import MultiDict
 
 
 class Controller(View):
@@ -16,9 +20,9 @@ class Controller(View):
         self.userService = UserService()
         self.authService = AuthService()
 
-    @cross_origin()
+    @jwt_optional()
     def dispatch_request(self):
-        user_form = UserForm(request.form)
+        user_form = UserForm(MultiDict(request.json))
         if user_form.validate():
             user = user_form.create()
             if user:

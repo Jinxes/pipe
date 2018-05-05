@@ -1,9 +1,7 @@
 # -*- coding:utf8 -*-
 import jwt
-from flask import request
-from boot.kernel import app
-from common.singleton import singleton
-from ports.user.model.user import User
+from flask import current_app
+from boot.singleton import singleton
 from .user import UserService
 from werkzeug.security import check_password_hash
 
@@ -13,7 +11,7 @@ class AuthService:
     algorithm = 'HS256'
 
     def __init__(self):
-        self.secret_key = app.config.get('SECRET_KEY')
+        self.secret_key = current_app.config.get('SECRET_KEY')
 
     def make_auth_token(self, user):
         '''
@@ -25,7 +23,9 @@ class AuthService:
             'identity': user.id,
             'id': user.id,
             'nickname': user.nickname,
-            'gender': user.gender
+            'gender': user.gender,
+            'exp': 0,
+            'iat': 0
         }
         token = jwt.encode(payload, self.secret_key, self.algorithm)
         return token
